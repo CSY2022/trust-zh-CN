@@ -1,10 +1,33 @@
 <!doctype html>
 <html>
 <head>
-    <title>信任的进化</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="an interactive guide to the game theory of why &amp; how we trust each other">
+<title>信任的进化</title>
+	<meta name="description" content="an interactive guide to the game theory of why &amp; how we trust each other"/>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<meta charset="utf-8">
+	<link rel="icon" type="image/png" href="favicon.png">
+
+	<!-- TO TRANSLATE: "name", "description" -->
+	<meta itemprop="name" content="The Evolution of Trust">
+	<meta itemprop="description" content="an interactive guide to the game theory of why &amp; how we trust each other">
+	<meta itemprop="image" content="social/thumbnail.png">
+
+	<!-- TO TRANSLATE: "name", "description" -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:site" content="@ncasenmare">
+	<meta name="twitter:title" content="The Evolution of Trust">
+	<meta name="twitter:description" content="an interactive guide to the game theory of why &amp; how we trust each other">
+	<meta name="twitter:creator" content="@ncasenmare">
+	<meta name="twitter:image" content="social/thumbnail.png">
+
+	<!-- TO TRANSLATE: "name", "description" -->
+	<meta property="og:title" content="The Evolution of Trust">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://dccxi.com/trust/">
+	<meta property="og:image" content="social/thumbnail.png">
+	<meta property="og:description" content="an interactive guide to the game theory of why &amp; how we trust each other">
+
     
     <!-- 内联基础样式 -->
     <style>
@@ -67,8 +90,36 @@
     <link rel="stylesheet" href="css/slides.css?v10">
     <link rel="stylesheet" href="css/balloon.css?v10">
 </head>
-<body>	<div id="preloader">载入中...</div> <!-- TRANSLATE THIS -->	<div style="display:none" id="main">		<div id="slideshow_container">			<div id="slideshow"></div>			<div id="scratcher"></div>		</div>	</div>	<div style="display:none" id="footer">		<div id="sound" sound="on" class="no-select">			<div id="sound_icon"></div>			<div id="sound_on"></div> <!-- TRANSLATE THIS -->			<div id="sound_off"></div> <!-- TRANSLATE THIS -->			<!-- IMHO icon is intuitive enough, no need for text -->		</div>		<div id="select"></div>
-		<!-- TRANSLATE "title" & "text". Make sure it's less than 112 characters, for Twitter's sake -->		<!-- Also, change "link" to whatever the link for the translated version will be! -->		<sharing title="信用的进化"				 text="人们不再彼此相互信任，为什么？我们该怎么改变这种情况？一个合作博弈论的互动讲解手册："				 link="https://dccxi.com/trust/">		</sharing>
+<body>
+    <!-- 预加载界面 -->
+    <div id="preloader">
+        <div class="loader"></div>
+        <div>加载中，请稍候...</div>
+        <div id="load-progress"></div>
+        <button id="retry-btn" style="display:none" onclick="window.location.reload()">重新加载</button>
+    </div>
+    
+    <!-- 主内容 -->
+    <div id="main" style="display:none">
+        <div id="slideshow_container">
+            <div id="slideshow"></div>
+            <div id="scratcher"></div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <div id="footer" style="display:none">
+        <div id="sound" sound="on" class="no-select">
+            <div id="sound_icon"></div>
+            <div id="sound_on">开</div>
+            <div id="sound_off">关</div>
+        </div>
+        <div id="select"></div>
+        <sharing title="信用的进化"
+                 text="人们不再彼此相互信任，为什么？我们该怎么改变这种情况？一个合作博弈论的互动讲解手册："
+                 link="https://trust.csy2022.top/">
+        </sharing>
+    </div>
 
     <!-- 按照原始顺序加载JS文件 -->
     <script>
