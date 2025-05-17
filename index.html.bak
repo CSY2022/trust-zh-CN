@@ -5,16 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="an interactive guide to the game theory of why &amp; how we trust each other">
-
-    <!-- 内联关键CSS以避免加载阻塞 -->
+    
+    <!-- 内联基础样式 -->
     <style>
-        /* 基础样式 */
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            overflow-x: hidden;
         }
         
         #preloader {
@@ -32,19 +31,6 @@
             font-size: 18px;
         }
         
-        #main {
-            display: none;
-            width: 100%;
-            max-width: 100%;
-        }
-        
-        #slideshow_container {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        
-        /* 加载动画 */
         .loader {
             border: 5px solid #f3f3f3;
             border-top: 5px solid #3498db;
@@ -59,18 +45,39 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        #load-progress {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        #retry-btn {
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
+    
+    <!-- 外部CSS -->
+    <link rel="stylesheet" href="css/slides.css?v10">
+    <link rel="stylesheet" href="css/balloon.css?v10">
 </head>
 <body>
-    <!-- 改进的预加载界面 -->
+    <!-- 预加载界面 -->
     <div id="preloader">
         <div class="loader"></div>
-        <div>加载中...</div>
-        <div id="load-progress" style="margin-top: 10px; font-size: 14px;"></div>
+        <div>加载中，请稍候...</div>
+        <div id="load-progress"></div>
+        <button id="retry-btn" style="display:none" onclick="window.location.reload()">重新加载</button>
     </div>
     
-    <!-- 主内容区域 -->
-    <div id="main">
+    <!-- 主内容 -->
+    <div id="main" style="display:none">
         <div id="slideshow_container">
             <div id="slideshow"></div>
             <div id="scratcher"></div>
@@ -85,96 +92,141 @@
             <div id="sound_off">关</div>
         </div>
         <div id="select"></div>
-
         <sharing title="信用的进化"
                  text="人们不再彼此相互信任，为什么？我们该怎么改变这种情况？一个合作博弈论的互动讲解手册："
                  link="https://trust.csy2022.top/">
         </sharing>
     </div>
 
-    <!-- 使用资源加载监控脚本 -->
+    <!-- 按照原始顺序加载JS文件 -->
     <script>
-        // 资源加载监控
-        const resources = [
-            'css/slides.css',
-            'css/balloon.css',
-            'js/lib/helpers.js',
-            'js/lib/pegasus.js',
-            'js/lib/minpubsub.src.js',
-            'js/lib/pixi.min.js',
-            'js/lib/howler.js',
-            'js/lib/tweenjs-0.6.2.min.js',
-            'js/lib/sharing.js',
-            'js/core/Loader.js',
-            'js/core/Slideshow.js',
-            'js/core/SlideSelect.js',
-            'js/core/Button.js',
-            'js/core/TextBox.js',
-            'js/core/Words.js',
-            'js/main.js'
+        // 资源列表（保持原始顺序）
+        const jsResources = [
+            'js/lib/helpers.js?v10',
+            'js/lib/pegasus.js?v10',
+            'js/lib/minpubsub.src.js?v10',
+            'js/lib/q.js?v10',
+            'js/lib/pixi.min.js?v10',
+            'js/lib/howler.js?v10',
+            'js/lib/tweenjs-0.6.2.min.js?v10',
+            'js/lib/sharing.js?v10',
+            'js/core/Loader.js?v10',
+            'js/core/Slideshow.js?v10',
+            'js/core/SlideSelect.js?v10',
+            'js/core/Button.js?v10',
+            'js/core/TextBox.js?v10',
+            'js/core/Words.js?v10',
+            'js/core/IncDecNumber.js?v10',
+            'js/core/Slider.js?v10',
+            'js/core/Scratcher.js?v10',
+            'js/core/Background.js?v10',
+            'js/core/ImageBox.js?v10',
+            'js/core/PayoffsUI.js?v10',
+            'js/sims/Splash.js?v10',
+            'js/sims/PD.js?v10',
+            'js/sims/Iterated.js?v10',
+            'js/sims/Tournament.js?v10',
+            'js/sims/SandboxUI.js?v10',
+            'js/slides/0_Slides_Intro.js?v10',
+            'js/slides/1_Slides_OneOff.js?v10',
+            'js/slides/2_Slides_Iterated.js?v10',
+            'js/slides/3_Slides_Tournament.js?v10',
+            'js/slides/4_Slides_Evolution.js?v10',
+            'js/slides/5_Slides_Distrust.js?v10',
+            'js/slides/6_Slides_Noise.js?v10',
+            'js/slides/7_Slides_Sandbox.js?v10',
+            'js/slides/8_Slides_Conclusion.js?v10',
+            'js/slides/9_Slides_Credits.js?v10',
+            'js/main.js?v10'
         ];
         
         let loadedCount = 0;
+        const totalResources = jsResources.length;
         const progressElement = document.getElementById('load-progress');
+        const retryBtn = document.getElementById('retry-btn');
         
         function updateProgress() {
             loadedCount++;
-            const progress = Math.round((loadedCount / resources.length) * 100);
-            progressElement.textContent = `已加载 ${progress}%`;
+            const progress = Math.round((loadedCount / totalResources) * 100);
+            progressElement.textContent = `加载进度: ${progress}% (${loadedCount}/${totalResources})`;
             
-            if (loadedCount === resources.length) {
+            if (loadedCount === totalResources) {
                 // 所有资源加载完成
+                progressElement.textContent = "加载完成，正在初始化...";
+                
+                // 确保PIXI等库已完全初始化
                 setTimeout(() => {
                     document.getElementById('preloader').style.display = 'none';
                     document.getElementById('main').style.display = 'block';
                     document.getElementById('footer').style.display = 'flex';
                     
-                    // 初始化主应用
-                    if (typeof initApp === 'function') {
+                    // 检查主应用是否已自动初始化
+                    if (typeof c_ === 'object' && c_.ready) {
+                        console.log("应用已自动初始化");
+                    } else if (typeof initApp === 'function') {
                         initApp();
                     }
-                }, 500);
+                }, 300);
             }
         }
         
-        // 动态加载资源
-        resources.forEach(resource => {
-            const isCSS = resource.endsWith('.css');
-            const element = isCSS 
-                ? document.createElement('link')
-                : document.createElement('script');
-            
-            if (isCSS) {
-                element.rel = 'stylesheet';
-                element.href = resource + '?v=' + Date.now();
-            } else {
-                element.src = resource + '?v=' + Date.now();
-            }
-            
-            element.onload = updateProgress;
-            element.onerror = function() {
-                console.error('Failed to load resource:', resource);
-                updateProgress(); // 即使失败也继续
-            };
-            
-            document.head.appendChild(element);
-        });
+        function loadScript(url, onSuccess, onError) {
+            const script = document.createElement('script');
+            script.src = url;
+            script.onload = onSuccess;
+            script.onerror = onError;
+            document.head.appendChild(script);
+        }
         
-        // 超时处理
-        setTimeout(() => {
-            if (loadedCount < resources.length) {
-                progressElement.textContent += ' (网络较慢，请耐心等待...)';
-            }
-        }, 5000);
+        function startLoading() {
+            // 重置状态
+            loadedCount = 0;
+            progressElement.textContent = "开始加载...";
+            retryBtn.style.display = 'none';
+            
+            // 顺序加载脚本
+            jsResources.forEach((url, index) => {
+                setTimeout(() => {
+                    loadScript(
+                        url,
+                        updateProgress,
+                        function() {
+                            console.error('加载失败: ' + url);
+                            updateProgress(); // 即使失败也继续
+                        }
+                    );
+                }, index * 100); // 稍微错开加载时间
+            });
+            
+            // 设置超时检查
+            setTimeout(() => {
+                if (loadedCount < totalResources * 0.5) { // 如果加载少于50%
+                    progressElement.innerHTML += "<br>加载较慢，请检查网络...";
+                    retryBtn.style.display = 'block';
+                }
+            }, 10000);
+            
+            // 最终超时
+            setTimeout(() => {
+                if (loadedCount < totalResources) {
+                    progressElement.innerHTML = 
+                        `加载不完全 (${loadedCount}/${totalResources})<br>` +
+                        "部分资源可能未正确加载<br>" +
+                        "建议:<br>" +
+                        "1. 检查网络连接<br>" +
+                        "2. 刷新页面重试";
+                    retryBtn.style.display = 'block';
+                }
+            }, 30000);
+        }
         
-        // 极端情况处理
-        setTimeout(() => {
-            if (loadedCount < resources.length) {
-                progressElement.textContent = '加载遇到问题，尝试刷新页面';
-                document.getElementById('preloader').innerHTML += 
-                    '<div style="margin-top:20px;"><button onclick="window.location.reload()">刷新页面</button></div>';
-            }
-        }, 15000);
+        // 开始加载过程
+        startLoading();
+        
+        // 全局变量声明（与原始代码一致）
+        var c_ = {};
+        var createjs = window;
+        Ticker = { framerate: 60, paused: true };
     </script>
 </body>
 </html>
