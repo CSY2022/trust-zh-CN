@@ -1,223 +1,180 @@
 <!doctype html>
 <html>
 <head>
-	<!-- 精简后的元数据 -->
-	<title>信任的进化</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<meta name="description" content="an interactive guide to the game theory of why &amp; how we trust each other">
-	
-	<!-- 基本社交媒体元数据 -->
-	<meta property="og:title" content="The Evolution of Trust">
-	<meta property="og:type" content="website">
-	<meta property="og:url" content="https://trust.csy2022.top/">
-	<meta property="og:image" content="social/thumbnail.png">
-	<meta property="og:description" content="an interactive guide to the game theory of why &amp; how we trust each other">
+    <title>信任的进化</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="an interactive guide to the game theory of why &amp; how we trust each other">
 
-	<!-- 样式 -->
-	<link rel="stylesheet" href="css/slides.css?v10">
-	<link rel="stylesheet" href="css/balloon.css?v10">
-	
-	<!-- 移动端专用样式 -->
-	<style>
-		/* 基础样式 */
-		body {
-			font-size: 16px;
-			margin: 0;
-			padding: 0;
-			overflow-x: hidden;
-			-webkit-text-size-adjust: 100%;
-		}
-		
-		#main {
-			width: 100%;
-			max-width: 100%;
-			box-sizing: border-box;
-		}
-		
-		#slideshow_container {
-			width: 100%;
-			height: auto;
-			padding: 5px;
-			box-sizing: border-box;
-		}
-		
-		/* 移动设备竖屏特定样式 */
-		@media screen and (max-width: 768px) and (orientation: portrait) {
-			body {
-				font-size: 14px;
-			}
-			
-			#slideshow_container {
-				padding: 2px;
-			}
-			
-			/* 调整游戏元素大小和布局 */
-			.simulation-container {
-				width: 100%;
-				overflow: hidden;
-			}
-			
-			.game-board {
-				transform: scale(0.8);
-				transform-origin: top center;
-				margin: 0 auto;
-			}
-			
-			/* 按钮和交互元素 */
-			.button, .slider-handle, .checkbox {
-				min-width: 36px;
-				min-height: 36px;
-				font-size: 13px;
-				padding: 6px 10px;
-				margin: 3px;
-			}
-			
-			/* 文本内容调整 */
-			.text-content {
-				padding: 5px;
-				line-height: 1.4;
-			}
-			
-			.textbox {
-				width: 98%;
-				margin: 5px auto;
-				font-size: 14px;
-			}
-			
-			/* 简化复杂元素 */
-			.secondary-visual {
-				display: none;
-			}
-			
-			/* 调整页脚 */
-			#footer {
-				flex-direction: column;
-				padding: 5px 0;
-			}
-			
-			#sound {
-				margin-bottom: 8px;
-			}
-			
-			sharing {
-				transform: scale(0.7);
-			}
-		}
-		
-		/* 小屏幕竖屏设备调整 */
-		@media screen and (max-width: 480px) and (orientation: portrait) {
-			body {
-				font-size: 13px;
-			}
-			
-			.button {
-				padding: 5px 8px;
-				font-size: 12px;
-				min-width: 32px;
-				min-height: 32px;
-			}
-			
-			/* 进一步缩小游戏元素 */
-			.game-board {
-				transform: scale(0.7);
-			}
-			
-			/* 简化文本内容 */
-			.long-text {
-				font-size: 12px;
-				line-height: 1.3;
-			}
-		}
-		
-		/* 横屏优化 - 保留原有优化 */
-		@media screen and (orientation: landscape) {
-			/* 横屏特有样式 */
-		}
-		
-		/* 预加载样式 */
-		#preloader {
-			font-size: 16px;
-			padding: 20px;
-			text-align: center;
-		}
-		
-		/* 移除方向提示层 - 因为现在支持竖屏 */
-		#orientation-warning {
-			display: none !important;
-		}
-	</style>
+    <!-- 内联关键CSS以避免加载阻塞 -->
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            z-index: 9999;
+            font-size: 18px;
+        }
+        
+        #main {
+            display: none;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        #slideshow_container {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        /* 加载动画 */
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-	<!-- 预加载提示 -->
-	<div id="preloader">
-		载入中...<br>
-		<small>最佳体验建议使用横屏模式</small>
-	</div>
-	
-	<div style="display:none" id="main">
-		<div id="slideshow_container">
-			<div id="slideshow"></div>
-			<div id="scratcher"></div>
-		</div>
-	</div>
-	
-	<div style="display:none" id="footer">
-		<div id="sound" sound="on" class="no-select">
-			<div id="sound_icon"></div>
-			<div id="sound_on">开</div>
-			<div id="sound_off">关</div>
-		</div>
-		<div id="select"></div>
+    <!-- 改进的预加载界面 -->
+    <div id="preloader">
+        <div class="loader"></div>
+        <div>加载中...</div>
+        <div id="load-progress" style="margin-top: 10px; font-size: 14px;"></div>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div id="main">
+        <div id="slideshow_container">
+            <div id="slideshow"></div>
+            <div id="scratcher"></div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <div id="footer" style="display:none">
+        <div id="sound" sound="on" class="no-select">
+            <div id="sound_icon"></div>
+            <div id="sound_on">开</div>
+            <div id="sound_off">关</div>
+        </div>
+        <div id="select"></div>
 
-		<sharing title="信用的进化"
-				 text="人们不再彼此相互信任，为什么？我们该怎么改变这种情况？一个合作博弈论的互动讲解手册："
-				 link="https://trust.csy2022.top/">
-		</sharing>
-	</div>
+        <sharing title="信用的进化"
+                 text="人们不再彼此相互信任，为什么？我们该怎么改变这种情况？一个合作博弈论的互动讲解手册："
+                 link="https://trust.csy2022.top/">
+        </sharing>
+    </div>
 
-	<!-- 脚本加载 -->
-	<script src="js/lib/helpers.js?v10"></script>
-	<script src="js/lib/pegasus.js?v10"></script>
-	<script>var c_ = {};</script>
-	<script src="js/lib/minpubsub.src.js?v10"></script>
-	<script src="js/lib/pixi.min.js?v10"></script>
-	<script src="js/lib/howler.js?v10"></script>
-	<script>var createjs = window;</script>
-	<script src="js/lib/tweenjs-0.6.2.min.js?v10"></script>
-	<script>Ticker.framerate=60; Ticker.paused=true;</script>
-	<script src="js/lib/sharing.js?v10"></script>
-
-	<!-- 核心引擎 -->
-	<script src="js/core/Loader.js?v10"></script>
-	<script src="js/core/Slideshow.js?v10"></script>
-	<script src="js/core/SlideSelect.js?v10"></script>
-	<script src="js/core/Button.js?v10"></script>
-	<script src="js/core/TextBox.js?v10"></script>
-	<script src="js/core/Words.js?v10"></script>
-
-	<!-- 主代码 - 添加竖屏适配逻辑 -->
-	<script src="js/main.js?v10"></script>
-	
-	<!-- 竖屏适配脚本 -->
-	<script>
-		// 动态调整内容以适应竖屏
-		function adaptToPortrait() {
-			if (window.innerHeight > window.innerWidth) {
-				// 竖屏模式下的调整
-				document.body.classList.add('portrait-mode');
-				
-				// 可以在这里添加更多JavaScript调整
-				console.log("竖屏模式已激活");
-			} else {
-				document.body.classList.remove('portrait-mode');
-			}
-		}
-		
-		// 初始检查和事件监听
-		adaptToPortrait();
-		window.addEventListener('resize', adaptToPortrait);
-		window.addEventListener('orientationchange', adaptToPortrait);
-	</script>
+    <!-- 使用资源加载监控脚本 -->
+    <script>
+        // 资源加载监控
+        const resources = [
+            'css/slides.css',
+            'css/balloon.css',
+            'js/lib/helpers.js',
+            'js/lib/pegasus.js',
+            'js/lib/minpubsub.src.js',
+            'js/lib/pixi.min.js',
+            'js/lib/howler.js',
+            'js/lib/tweenjs-0.6.2.min.js',
+            'js/lib/sharing.js',
+            'js/core/Loader.js',
+            'js/core/Slideshow.js',
+            'js/core/SlideSelect.js',
+            'js/core/Button.js',
+            'js/core/TextBox.js',
+            'js/core/Words.js',
+            'js/main.js'
+        ];
+        
+        let loadedCount = 0;
+        const progressElement = document.getElementById('load-progress');
+        
+        function updateProgress() {
+            loadedCount++;
+            const progress = Math.round((loadedCount / resources.length) * 100);
+            progressElement.textContent = `已加载 ${progress}%`;
+            
+            if (loadedCount === resources.length) {
+                // 所有资源加载完成
+                setTimeout(() => {
+                    document.getElementById('preloader').style.display = 'none';
+                    document.getElementById('main').style.display = 'block';
+                    document.getElementById('footer').style.display = 'flex';
+                    
+                    // 初始化主应用
+                    if (typeof initApp === 'function') {
+                        initApp();
+                    }
+                }, 500);
+            }
+        }
+        
+        // 动态加载资源
+        resources.forEach(resource => {
+            const isCSS = resource.endsWith('.css');
+            const element = isCSS 
+                ? document.createElement('link')
+                : document.createElement('script');
+            
+            if (isCSS) {
+                element.rel = 'stylesheet';
+                element.href = resource + '?v=' + Date.now();
+            } else {
+                element.src = resource + '?v=' + Date.now();
+            }
+            
+            element.onload = updateProgress;
+            element.onerror = function() {
+                console.error('Failed to load resource:', resource);
+                updateProgress(); // 即使失败也继续
+            };
+            
+            document.head.appendChild(element);
+        });
+        
+        // 超时处理
+        setTimeout(() => {
+            if (loadedCount < resources.length) {
+                progressElement.textContent += ' (网络较慢，请耐心等待...)';
+            }
+        }, 5000);
+        
+        // 极端情况处理
+        setTimeout(() => {
+            if (loadedCount < resources.length) {
+                progressElement.textContent = '加载遇到问题，尝试刷新页面';
+                document.getElementById('preloader').innerHTML += 
+                    '<div style="margin-top:20px;"><button onclick="window.location.reload()">刷新页面</button></div>';
+            }
+        }, 15000);
+    </script>
 </body>
 </html>
